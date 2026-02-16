@@ -1,0 +1,43 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from PIL import Image
+import random
+
+# CONFIG (ADDING MORE FANTASY CHARACTERS LATER)
+matrix_chars = list("0123456789ABCDEF!@#$%^&*()_+-=[]{};':,.<>/?\\")
+fontsize = 6
+mask_path = "gengar_mask.png"  # black silhouette on white bg
+
+# LOAD MASK
+img = Image.open(mask_path).convert("L")
+mask = np.array(img)
+height, width = mask.shape
+mask_bool = mask < 128  # True inside silhouette
+
+# SETUP FIGURE
+fig, ax = plt.subplots(figsize=(8, 10))
+ax.set_facecolor("black")
+plt.axis("off")
+
+# RENDER GRID
+for y in range(height):
+    for x in range(width):
+        char = random.choice(matrix_chars)
+
+        if mask_bool[y, x]:
+            color = (0.7, 0.2, 1.0)  # bright purple
+        else:
+            color = (0.2, 0.0, 0.3)  # dark background purple
+
+        ax.text(
+            x / width,
+            1 - y / height,
+            char,
+            fontsize=fontsize,
+            color=color,
+            ha="center",
+            va="center",
+            transform=ax.transAxes
+        )
+
+plt.show()
